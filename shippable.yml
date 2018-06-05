@@ -1,0 +1,39 @@
+resources:
+  - name: cd_gke_docker_opts
+    type: dockerOptions
+    versionTemplate:
+      linuxParameters:
+        initProcessEnabled: true
+      memory: 100
+      portMappings:
+        - 80:80
+
+  - name: cd_gke_env
+    type: params
+    version:
+      params:
+        ENVIRONMENT: "test"
+
+jobs:
+  - name: cd_gke_manifest
+    type: manifest
+    steps:
+     - IN: node_app_img_dh # defined here https://github.com/devops-recipes/node_app/blob/master/shippable.yml
+     - IN: cd_gke_docker_opts
+     - IN: cd_gke_env
+    flags:
+      - gcp_gke
+      - gcp
+      - ship
+
+  - name: cd_gke_deploy
+    type: deploy
+    steps:
+      - IN: cd_gke_manifest
+      - IN: gcp_gke_cluster # defined here https://github.com/devops-recipes/prov_gcp_gke_gcloud/blob/master/shippable.yml
+      - TASK: managed
+        deployMethod: replace
+    flags:
+      - gcp_gke
+      - gcp
+      - ship
