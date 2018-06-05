@@ -2,8 +2,7 @@ resources:
   - name: cd_gke_docker_opts
     type: dockerOptions
     versionTemplate:
-      linuxParameters:
-        initProcessEnabled: true
+      workingDir: "/tmp"
       memory: 100
       portMappings:
         - 80:80
